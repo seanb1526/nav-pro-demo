@@ -1,3 +1,12 @@
+This repo is a demo of IndoorNav Pro products. 
+In its current state it includes:
+- 2 Pro Map demos
+
+Future Updates:
+- Outdoor implementation
+- Outdoor to Indoor tech development 
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
