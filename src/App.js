@@ -1,5 +1,6 @@
 import './App.css';
 import Navbar from './navbar.js';
+import GoogleMaps from "./googleMap.jsx";
 
 function App() {
   return (
@@ -28,7 +29,13 @@ function App() {
         height="600"
         width="80%"
         title="map2"
-        id="myFrame"></iframe>
+        id="myFrame2"></iframe>
+
+        <div id="googleMaps">
+          <p>Google Maps API Content here</p>
+          <GoogleMaps />
+        </div>
+
       </body>
 
     </div>
