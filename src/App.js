@@ -1,5 +1,5 @@
 import './App.css';
-import Navbar from './navbar.js';
+import Navbar from './Navbar.js';
 
 function App() {
   return (
@@ -7,13 +7,11 @@ function App() {
       <Navbar />
       <header className="App-header" id="home">
         <h1>IndoorNav Pro Prototype</h1>
-        <p>This is an example of a simple map app we can build for your event</p>
+        <p>Examples of maps we build</p>
       </header>
 
       <body className="App-body">
-        <p style={{ fontSize: '18px' }} >Below is an example of one of our Pro maps, the tier above our basic map.</p>
-        <p style={{ fontSize: '18px' }} >It features locations, points of interest, wayfinding/directions, colors, images, and descriptions. </p>
-        <p style={{ fontSize: '18px' }} >Our Basic tier has locations and wayfinding, but does not include the customization features of images, colors, and points of interest.</p>
+        <p style={{ fontSize: '18px' }} >Below is an example of one of our Pro maps.</p>
         <iframe
           title="map"
           id="myFrame"
