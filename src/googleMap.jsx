@@ -10,27 +10,13 @@ import {
 
 export default function DemoMap() {
     const [currentPosition, setCurrentPosition] = useState(null);
-    const [isInArea, setIsInArea] = useState(false);
-
-    const bounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(38.35960, -75.60600), // Southwest corner of the bounds
-        new google.maps.LatLng(38.37000, -75.59800)  // Northeast corner of the bounds
-    );
 
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    const userPosition = new google.maps.LatLng(latitude, longitude);
-
-                    if (bounds.contains(userPosition)) {
-                        setCurrentPosition({ lat: latitude, lng: longitude });
-                        setIsInArea(true);
-                    } else {
-                        setCurrentPosition(null);
-                        setIsInArea(false);
-                    }
+                    setCurrentPosition({ lat: latitude, lng: longitude });
                 },
                 (error) => {
                     console.error("Error getting geolocation:", error);
@@ -48,7 +34,7 @@ export default function DemoMap() {
             <div style={{ height: "600px", width: "600px" }}>
                 <Map
                     defaultZoom={19}
-                    center={isInArea ? currentPosition : initialPosition}
+                    center={currentPosition || initialPosition}
                     mapId={"e9c9c121873f7673"}
                     options={{
                         zoom: 15,
@@ -58,11 +44,12 @@ export default function DemoMap() {
                         disableDefaultUI: false,
                     }}
                 >
-                    {isInArea && currentPosition && (
+                    
+                    {currentPosition && (
                         <AdvancedMarker position={currentPosition}>
                             <Pin background={"blue"} borderColor={"white"} glyphColor={"white"}></Pin>
                         </AdvancedMarker>
-                    )}
+                   )}
                 </Map>
             </div>
         </APIProvider>
