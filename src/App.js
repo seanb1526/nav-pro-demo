@@ -1,5 +1,5 @@
 import './App.css';
-import Navbar from './navbar.js';
+import Navbar from './Navbar.js';
 import GoogleMaps from "./googleMap.jsx";
 
 function App() {
