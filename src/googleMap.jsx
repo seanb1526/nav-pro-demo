@@ -72,6 +72,9 @@ export default function DemoMap() {
         setInfoWindowOpen(false);
     };
 
+    // image url for custom marker
+    const blueDot = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Location_dot_blue.svg/1200px-Location_dot_blue.svg.png";
+
     return (
         <APIProvider apiKey={"AIzaSyCUF5Jgaynpno29mmmDPUzsTlz82CwxJ6Q"}>
             <div style={{ height: "600px", width: "600px" }}>
@@ -88,33 +91,26 @@ export default function DemoMap() {
                     }}
                 >
 
-                                        {/* Marker for indoorm map */}
-                                        <AdvancedMarker position={indoorMapMarker} onClick={handleMarkerClick} onMouseOver={handleMarkerHover}
-                        onMouseOut={handleInfoWindowClose}>
+                    {/* Marker for indoorm map */}
+                    <AdvancedMarker position={indoorMapMarker}
+                        title={"Indoor Directions"}
+                        onClick={handleMarkerClick}
+                        onMouseOver={handleMarkerHover}
+                        onMouseOut={handleInfoWindowClose}
+                    >
                         <Pin background={"orange"} borderColor={"black"} glyphColor={"white"}></Pin>
                     </AdvancedMarker>
 
-                    {/* InfoWindow for indoor map marker */}
-                    {infoWindowOpen && (
-                        <InfoWindow
-                            anchor={indoorMapMarker}
-                            onCloseClick={handleInfoWindowClose}
-                        >
-                            <div style={{ backgroundColor: "white", padding: "10px" }}>
-                                <p style={{ margin: 0, color: "black" }}>Click here for indoor map</p>
-                            </div>
-                        </InfoWindow>
-                    )}
 
                     {showCurrentMarker && (
-                        <AdvancedMarker position={currentPosition}>
-                            <Pin background={"transparent"} borderColor={"white"} glyphColor={"blue"}></Pin>
+                        <AdvancedMarker position={currentPosition} title={"You are HERE!"} zIndex={2}>
+                            <img src={blueDot} alt="Custom Marker" style={{ width: "14px", height: "14px" }} />
                         </AdvancedMarker>
                     )}
 
                     {/* Marker for initial position when not within bounds */}
                     {!showCurrentMarker && (
-                        <AdvancedMarker position={initialPosition}>
+                        <AdvancedMarker position={initialPosition} title={"Location"}>
                             <Pin background={"transparent"} borderColor={"white"} glyphColor={"red"}></Pin>
                         </AdvancedMarker>
                     )}
