@@ -6,11 +6,13 @@ import {
     Map,
     AdvancedMarker,
     Pin,
+    InfoWindow,
 } from "@vis.gl/react-google-maps";
 
 export default function DemoMap() {
     const [currentPosition, setCurrentPosition] = useState(null);
     const [showCurrentMarker, setShowCurrentMarker] = useState(false);
+    const [infoWindowOpen, setInfoWindowOpen] = useState(false); // Define infoWindowOpen state
 
     useEffect(() => {
         const getLocation = () => {
@@ -39,6 +41,7 @@ export default function DemoMap() {
         getLocation();
     }, []);
 
+    const indoorMapMarker = { lat: 38.36507855254162, lng: -75.6020517449648 };
     const initialPosition = { lat: 38.36514, lng: -75.60210 };
     const bounds = {
         north: 38.36532,
@@ -47,9 +50,26 @@ export default function DemoMap() {
         west: -75.60243,
     };
 
+    /* Function that checks user location and determines if they are within the property boundaries */
     const checkBounds = ({ lat, lng }) => {
         return lat >= bounds.south && lat <= bounds.north &&
-               lng >= bounds.west && lng <= bounds.east;
+            lng >= bounds.west && lng <= bounds.east;
+    };
+
+    /* On Click function that handles a click of the indoor map marker */
+    const handleMarkerClick = () => {
+        const url = "https://app.mappedin.com/map/66705274ba9455000bd6fc21";
+        window.open(url, "_blank");
+    };
+
+    /* Function to handle marker hover */
+    const handleMarkerHover = () => {
+        setInfoWindowOpen(true);
+    };
+
+    /* Function to handle closing the info window */
+    const handleInfoWindowClose = () => {
+        setInfoWindowOpen(false);
     };
 
     return (
@@ -67,21 +87,40 @@ export default function DemoMap() {
                         disableDefaultUI: false,
                     }}
                 >
+
+                                        {/* Marker for indoorm map */}
+                                        <AdvancedMarker position={indoorMapMarker} onClick={handleMarkerClick} onMouseOver={handleMarkerHover}
+                        onMouseOut={handleInfoWindowClose}>
+                        <Pin background={"orange"} borderColor={"black"} glyphColor={"white"}></Pin>
+                    </AdvancedMarker>
+
+                    {/* InfoWindow for indoor map marker */}
+                    {infoWindowOpen && (
+                        <InfoWindow
+                            anchor={indoorMapMarker}
+                            onCloseClick={handleInfoWindowClose}
+                        >
+                            <div style={{ backgroundColor: "white", padding: "10px" }}>
+                                <p style={{ margin: 0, color: "black" }}>Click here for indoor map</p>
+                            </div>
+                        </InfoWindow>
+                    )}
+
                     {showCurrentMarker && (
                         <AdvancedMarker position={currentPosition}>
-                            <Pin background={"blue"} borderColor={"white"} glyphColor={"white"}></Pin>
+                            <Pin background={"transparent"} borderColor={"white"} glyphColor={"blue"}></Pin>
                         </AdvancedMarker>
                     )}
 
                     {/* Marker for initial position when not within bounds */}
                     {!showCurrentMarker && (
                         <AdvancedMarker position={initialPosition}>
-                            <Pin background={"red"} borderColor={"white"} glyphColor={"white"}></Pin>
+                            <Pin background={"transparent"} borderColor={"white"} glyphColor={"red"}></Pin>
                         </AdvancedMarker>
                     )}
+
                 </Map>
             </div>
         </APIProvider>
     );
 }
-
