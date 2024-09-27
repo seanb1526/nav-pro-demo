@@ -1,122 +1,102 @@
 "use client";
+import { useState, useRef } from "react";
+import { APIProvider, Map, Marker, InfoWindow } from "@vis.gl/react-google-maps";
 
-import { useState, useEffect } from "react";
-import {
-    APIProvider,
-    Map,
-    AdvancedMarker,
-    Pin,
-    InfoWindow,
-} from "@vis.gl/react-google-maps";
+export default function FreeMovingMap() {
+    const initialPosition = { lat: 38.36530757341981, lng: -75.60163592504408 };
+    const markers = [
+        {
+            id: 1,
+            position: { lat: 38.365250007876, lng: -75.60193485449949 },
+            title: "Rommel Center",
+            description: "Visit the Rommel Center for various resources and events.",
+            imageUrl: "https://0utwqfl7.cdn.imgeng.in/academic-offices/business/entrepreneurship-competitions/programs/_images/suec-reception.jpg",
+            infoLink: "https://www.salisbury.edu/academic-offices/business/entrepreneurship-competitions/programs/"
+        },
+        {
+            id: 2,
+            position: { lat: 38.36630757341981, lng: -75.60263592504408 }, // Example coordinates for another marker
+            title: "Another Location",
+            description: "Description for another location.",
+            imageUrl: "https://example.com/image.jpg", // Replace with an actual image URL
+            infoLink: "https://example.com" // Replace with an actual link
+        }
+        // Add more markers as needed
+    ];
+    
+    const mapRef = useRef(null);
+    const [activeMarkerId, setActiveMarkerId] = useState(null);
 
-export default function DemoMap() {
-    const [currentPosition, setCurrentPosition] = useState(null);
-    const [showCurrentMarker, setShowCurrentMarker] = useState(false);
-    const [infoWindowOpen, setInfoWindowOpen] = useState(false); // Define infoWindowOpen state
-
-    useEffect(() => {
-        const getLocation = () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        setCurrentPosition({ lat: latitude, lng: longitude });
-                        console.log("Current Position:", { lat: latitude, lng: longitude });
-                        // Check if current position is within bounds
-                        const isInBounds = checkBounds({ lat: latitude, lng: longitude });
-                        setShowCurrentMarker(isInBounds);
-                    },
-                    (error) => {
-                        console.error("Error getting geolocation:", error);
-                        setShowCurrentMarker(false); // Default to not showing marker on error
-                    },
-                    { enableHighAccuracy: true } // Enable high accuracy mode
-                );
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-                setShowCurrentMarker(false); // Default to not showing marker if geolocation not supported
-            }
-        };
-
-        getLocation();
-    }, []);
-
-    const indoorMapMarker = { lat: 38.36507855254162, lng: -75.6020517449648 };
-    const initialPosition = { lat: 38.36514, lng: -75.60210 };
-    const bounds = {
-        north: 38.36532,
-        south: 38.36466,
-        east: -75.60169,
-        west: -75.60243,
+    const handleMarkerClick = (id) => {
+        setActiveMarkerId(id);
     };
 
-    /* Function that checks user location and determines if they are within the property boundaries */
-    const checkBounds = ({ lat, lng }) => {
-        return lat >= bounds.south && lat <= bounds.north &&
-            lng >= bounds.west && lng <= bounds.east;
-    };
-
-    /* On Click function that handles a click of the indoor map marker */
-    const handleMarkerClick = () => {
-        const url = "https://app.mappedin.com/map/66705274ba9455000bd6fc21";
-        window.open(url, "_blank");
-    };
-
-    /* Function to handle marker hover */
-    const handleMarkerHover = () => {
-        setInfoWindowOpen(true);
-    };
-
-    /* Function to handle closing the info window */
     const handleInfoWindowClose = () => {
-        setInfoWindowOpen(false);
+        setActiveMarkerId(null);
     };
-
-    // image url for custom marker
-    const blueDot = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Location_dot_blue.svg/1200px-Location_dot_blue.svg.png";
 
     return (
         <APIProvider apiKey={"AIzaSyCUF5Jgaynpno29mmmDPUzsTlz82CwxJ6Q"}>
             <div style={{ height: "600px", width: "600px" }}>
                 <Map
-                    defaultZoom={19}
-                    center={currentPosition && checkBounds(currentPosition) ? currentPosition : initialPosition}
+                    defaultZoom={17}
+                    defaultCenter={initialPosition}
                     mapId={"e9c9c121873f7673"}
                     options={{
-                        zoom: 15,
                         draggable: true,
-                        gestureHandling: 'greedy',
+                        gestureHandling: "greedy",
                         scrollwheel: true,
                         disableDefaultUI: false,
                     }}
+                    onLoad={(map) => {
+                        mapRef.current = map;
+                    }}
                 >
+                    {markers.map(marker => (
+                        <Marker
+                            key={marker.id}
+                            position={marker.position}
+                            title={marker.title}
+                            icon={{
+                                url: "https://cdn-icons-png.flaticon.com/512/10266/10266266.png",
+                                scaledSize: { width: 25, height: 25 },
+                            }}
+                            onClick={() => handleMarkerClick(marker.id)}
+                        />
+                    ))}
 
-                    {/* Marker for indoorm map */}
-                    <AdvancedMarker position={indoorMapMarker}
-                        title={"Indoor Directions"}
-                        onClick={handleMarkerClick}
-                        onMouseOver={handleMarkerHover}
-                        onMouseOut={handleInfoWindowClose}
-                    >
-                        <Pin background={"orange"} borderColor={"black"} glyphColor={"white"}></Pin>
-                    </AdvancedMarker>
-
-
-                    {showCurrentMarker && (
-                        <AdvancedMarker position={currentPosition} title={"You are HERE!"} zIndex={2}>
-                            <img src={blueDot} alt="Custom Marker" style={{ width: "14px", height: "14px" }} />
-                        </AdvancedMarker>
+                    {activeMarkerId !== null && (
+                        <InfoWindow
+                            position={markers.find(marker => marker.id === activeMarkerId).position}
+                            onCloseClick={handleInfoWindowClose}
+                        >
+                            <div style={{ width: '200px' }}>
+                                <h4 style={{ margin: '0' }}>{markers.find(marker => marker.id === activeMarkerId).title}</h4>
+                                <p>{markers.find(marker => marker.id === activeMarkerId).description}</p>
+                                <img
+                                    src={markers.find(marker => marker.id === activeMarkerId).imageUrl}
+                                    alt={markers.find(marker => marker.id === activeMarkerId).title}
+                                    style={{ width: '100%', height: 'auto', borderRadius: '5px' }}
+                                />
+                                <div style={{ marginTop: '10px' }}>
+                                    <a
+                                        href={markers.find(marker => marker.id === activeMarkerId).infoLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: 'none', color: '#007BFF' }}
+                                    >
+                                        More Information
+                                    </a>
+                                </div>
+                            </div>
+                        </InfoWindow>
                     )}
-
-                    {/* Marker for initial position when not within bounds */}
-                    {!showCurrentMarker && (
-                        <AdvancedMarker position={initialPosition} title={"Location"}>
-                            <Pin background={"transparent"} borderColor={"white"} glyphColor={"red"}></Pin>
-                        </AdvancedMarker>
-                    )}
-
                 </Map>
             </div>
         </APIProvider>
     );
 }
+
+
+
+
