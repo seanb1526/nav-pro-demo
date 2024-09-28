@@ -39,7 +39,7 @@ export default function FreeMovingMap() {
     const [activeMarkerId, setActiveMarkerId] = useState(null);
     const [origin, setOrigin] = useState(markers[0]);
     const [destination, setDestination] = useState(markers[1]);
-    const [directionsVisible, setDirectionsVisible] = useState(false); // Track if directions are visible
+    const [directionsVisible, setDirectionsVisible] = useState(false);
 
     const handleMarkerClick = (id) => {
         setActiveMarkerId(id);
@@ -50,107 +50,104 @@ export default function FreeMovingMap() {
     };
 
     const handleDirectionsChange = () => {
-        setDirectionsVisible(true); // Show directions
+        setDirectionsVisible(true);
     };
 
     const handleRemoveDirections = () => {
-        setDirectionsVisible(false); // Hide directions
+        setDirectionsVisible(false);
     };
 
     return (
         <div className="returnedContent">
             <APIProvider apiKey={apiKey}>
-                <div style={{ height: "100vh", width: "80vw", marginLeft: "20vw", position: "relative" }}>
-                    {/* Dropdowns for selecting origin and destination */}
-                    <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 1 }}>
-                        <select value={origin.id} onChange={(e) => setOrigin(markers.find(marker => marker.id === Number(e.target.value)))}>
-                            {markers.map(marker => (
-                                <option key={marker.id} value={marker.id}>{marker.title}</option>
-                            ))}
-                        </select>
+                <div style={{ height: "100vh", display: "flex" }}>
+                    {/* Left-side panel with info window and business directory */}
+                    <div style={{ width: "20vw", padding: "10px", marginTop: "10px" , display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
+                        
+                        {/* Info Window section */}
+                        <div style={{ flex: 1, overflowY: "auto" }}>
+                            {activeMarkerId && (
+                                <div>
+                                    <h4 style={{ margin: "0", fontSize: "18px" }}>{markers.find(marker => marker.id === activeMarkerId).title}</h4>
+                                    <img
+                                        src={markers.find(marker => marker.id === activeMarkerId).imageUrl}
+                                        alt={markers.find(marker => marker.id === activeMarkerId).title}
+                                        style={{ width: "100%", maxHeight: "150px", objectFit: "cover", borderRadius: "5px", marginTop: "10px" }}
+                                    />
+                                    <p>{markers.find(marker => marker.id === activeMarkerId).description}</p>
+                                    <a href={markers.find(marker => marker.id === activeMarkerId).infoLink} target="_blank" rel="noopener noreferrer">More Information</a>
+                                    <br />
+                                    <a href={markers.find(marker => marker.id === activeMarkerId).indoorMap} target="_blank" rel="noopener noreferrer">Indoor Map</a>
+                                </div>
+                            )}
+                        </div>
 
-                        <select value={destination.id} onChange={(e) => setDestination(markers.find(marker => marker.id === Number(e.target.value)))}>
-                            {markers.map(marker => (
-                                <option key={marker.id} value={marker.id}>{marker.title}</option>
-                            ))}
-                        </select>
-
-                        <button onClick={handleDirectionsChange}>Get Directions</button>
-                        {directionsVisible && (
-                            <button onClick={handleRemoveDirections} style={{ marginLeft: "10px" }}>
-                                Remove Directions
-                            </button>
-                        )}
+                        {/* Business Directory Section */}
+                        <div style={{ flex: 1, overflowY: "auto" }}>
+                            <h4>Business Directory</h4>
+                            <ul style={{ listStyleType: "none", padding: 0 }}>
+                                {markers.map((marker) => (
+                                    <li key={marker.id} style={{ display: "flex", alignItems: "center", marginBottom: "10px", cursor: "pointer" }} onClick={() => handleMarkerClick(marker.id)}>
+                                        <img src={marker.icon.url} alt={marker.title} style={{ width: "35px", height: "35px", marginRight: "10px" }} />
+                                        <span>{marker.title}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
 
-                    <Map
-                        defaultZoom={17}
-                        defaultCenter={initialPosition}
-                        mapId={mapId}
-                        options={{
-                            draggable: true,
-                            gestureHandling: "greedy",
-                            scrollwheel: true,
-                            disableDefaultUI: false,
-                        }}
-                        onLoad={(map) => {
-                            mapRef.current = map;
-                        }}
-                    >
-                        {directionsVisible && (
-                            <Directions originMarker={origin} destinationMarker={destination} />
-                        )}
+                    {/* Map */}
+                    <div style={{ height: "100vh", width: "80vw", position: "relative" }}>
+                        <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 1 }}>
+                            <select value={origin.id} onChange={(e) => setOrigin(markers.find(marker => marker.id === Number(e.target.value)))}>
+                                {markers.map(marker => (
+                                    <option key={marker.id} value={marker.id}>{marker.title}</option>
+                                ))}
+                            </select>
 
-                        {markers.map((marker) => (
-                            <Marker
-                                key={marker.id}
-                                position={marker.position}
-                                title={marker.title}
-                                icon={marker.icon}
-                                onClick={() => handleMarkerClick(marker.id)}
-                            />
-                        ))}
+                            <select value={destination.id} onChange={(e) => setDestination(markers.find(marker => marker.id === Number(e.target.value)))}>
+                                {markers.map(marker => (
+                                    <option key={marker.id} value={marker.id}>{marker.title}</option>
+                                ))}
+                            </select>
 
-                        {activeMarkerId !== null && (
-                            <InfoWindow
-                                position={markers.find((marker) => marker.id === activeMarkerId).position}
-                                onCloseClick={handleInfoWindowClose}
-                            >
-                                <div style={{ width: "400px" }}>
-                                    <h4 style={{ margin: "0", marginBottom: "20px", fontSize: "16px" }}>
-                                        {markers.find((marker) => marker.id === activeMarkerId).title}
-                                    </h4>
-                                    <img
-                                        src={markers.find((marker) => marker.id === activeMarkerId).imageUrl}
-                                        alt={markers.find((marker) => marker.id === activeMarkerId).title}
-                                        style={{ width: "100%", height: "auto", borderRadius: "5px" }}
-                                    />
-                                    <p>{markers.find((marker) => marker.id === activeMarkerId).description}</p>
+                            <button onClick={handleDirectionsChange}>Get Directions</button>
+                            {directionsVisible && (
+                                <button onClick={handleRemoveDirections} style={{ marginLeft: "10px" }}>
+                                    Remove Directions
+                                </button>
+                            )}
+                        </div>
 
-                                    <div style={{ marginTop: "10px" }}>
-                                        <a
-                                            href={markers.find((marker) => marker.id === activeMarkerId).infoLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ textDecoration: "none", color: "#007BFF", fontSize: "16px" }}
-                                        >
-                                            More Information
-                                        </a>
-                                    </div>
-                                    <div style={{ marginTop: "10px" }}>
-                                        <a
-                                            href={markers.find((marker) => marker.id === activeMarkerId).indoorMap}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ textDecoration: "none", color: "#007BFF", fontSize: "16px" }}
-                                        >
-                                            Indoor Map
-                                        </a>
-                                    </div>
-                                </div>
-                            </InfoWindow>
-                        )}
-                    </Map>
+                        <Map
+                            defaultZoom={17}
+                            defaultCenter={initialPosition}
+                            mapId={mapId}
+                            options={{
+                                draggable: true,
+                                gestureHandling: "greedy",
+                                scrollwheel: true,
+                                disableDefaultUI: false,
+                            }}
+                            onLoad={(map) => {
+                                mapRef.current = map;
+                            }}
+                        >
+                            {directionsVisible && (
+                                <Directions originMarker={origin} destinationMarker={destination} />
+                            )}
+
+                            {markers.map((marker) => (
+                                <Marker
+                                    key={marker.id}
+                                    position={marker.position}
+                                    title={marker.title}
+                                    icon={marker.icon}
+                                    onClick={() => handleMarkerClick(marker.id)}
+                                />
+                            ))}
+                        </Map>
+                    </div>
                 </div>
             </APIProvider>
         </div>
@@ -167,7 +164,7 @@ function Directions({ originMarker, destinationMarker }) {
 
         const service = new window.google.maps.DirectionsService();
         const renderer = new window.google.maps.DirectionsRenderer({
-            map: map, // Render on the provided map
+            map: map,
         });
 
         setDirectionsService(service);
@@ -179,8 +176,8 @@ function Directions({ originMarker, destinationMarker }) {
 
         directionsService.route(
             {
-                origin: originMarker.position, // Use the position of the origin marker
-                destination: destinationMarker.position, // Use the position of the destination marker
+                origin: originMarker.position,
+                destination: destinationMarker.position,
                 travelMode: window.google.maps.TravelMode.WALKING,
                 provideRouteAlternatives: true,
             },
@@ -194,7 +191,7 @@ function Directions({ originMarker, destinationMarker }) {
         );
 
         return () => {
-            directionsRenderer.setMap(null); // Clear the map when component unmounts
+            directionsRenderer.setMap(null);
         };
     }, [directionsService, directionsRenderer, originMarker, destinationMarker]);
 
