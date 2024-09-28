@@ -6,7 +6,6 @@ const apiKey = process.env.REACT_APP_API_KEY;
 const mapId = process.env.REACT_APP_MAP_ID;
 
 export default function FreeMovingMap() {
-
     const initialPosition = { lat: 38.36530757341981, lng: -75.60163592504408 };
 
     const markers = [
@@ -21,21 +20,20 @@ export default function FreeMovingMap() {
             icon: {
                 url: "https://cdn-icons-png.flaticon.com/512/10266/10266266.png",
                 scaledSize: { width: 35, height: 35 },
-            }
+            },
         },
         {
             id: 2,
-            position: { lat: 38.365285990594046, lng: -75.6004960811191 }, // Example coordinates for another marker
+            position: { lat: 38.365285990594046, lng: -75.6004960811191 },
             title: "Two Scoops IceCream",
             description: "Two Scoops Ice Cream & Waffles is a one of a kind ice-cream parlor and gift shop located in Downtown Salisbury.",
-            imageUrl: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/92/38/81/outside-seating-two-scoops.jpg?w=1100&h=-1&s=1", // Replace with an actual image URL
-            infoLink: "https://www.facebook.com/twoscoopssby/", // Replace with an actual link
+            imageUrl: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/28/92/38/81/outside-seating-two-scoops.jpg?w=1100&h=-1&s=1",
+            infoLink: "https://www.facebook.com/twoscoopssby/",
             icon: {
-                url: "https://downtownsby.com/wp-content/uploads/2021/10/Two-Scoops-Ice-Cream-Waffels.jpg", // Another unique icon
+                url: "https://downtownsby.com/wp-content/uploads/2021/10/Two-Scoops-Ice-Cream-Waffels.jpg",
                 scaledSize: { width: 35, height: 35 },
-            }
+            },
         },
-        // Add more markers with unique icons as needed
     ];
 
     const mapRef = useRef(null);
@@ -67,47 +65,51 @@ export default function FreeMovingMap() {
                             mapRef.current = map;
                         }}
                     >
-                        <Directions />  {/* This is a custom component that we have to create and set up */}
-                        {markers.map(marker => (
+                        {/* Pass the first and second markers as origin and destination */}
+                        <Directions originMarker={markers[0]} destinationMarker={markers[1]} />
+
+                        {markers.map((marker) => (
                             <Marker
                                 key={marker.id}
                                 position={marker.position}
                                 title={marker.title}
-                                icon={marker.icon} // Use the icon from the marker object
+                                icon={marker.icon}
                                 onClick={() => handleMarkerClick(marker.id)}
                             />
                         ))}
 
                         {activeMarkerId !== null && (
                             <InfoWindow
-                                position={markers.find(marker => marker.id === activeMarkerId).position}
+                                position={markers.find((marker) => marker.id === activeMarkerId).position}
                                 onCloseClick={handleInfoWindowClose}
                             >
-                                <div style={{ width: '400px' }}>
-                                    <h4 style={{ margin: '0', marginBottom: '20px', 'font-size': '16px' }}>{markers.find(marker => marker.id === activeMarkerId).title}</h4>
+                                <div style={{ width: "400px" }}>
+                                    <h4 style={{ margin: "0", marginBottom: "20px", fontSize: "16px" }}>
+                                        {markers.find((marker) => marker.id === activeMarkerId).title}
+                                    </h4>
                                     <img
-                                        src={markers.find(marker => marker.id === activeMarkerId).imageUrl}
-                                        alt={markers.find(marker => marker.id === activeMarkerId).title}
-                                        style={{ width: '100%', height: 'auto', borderRadius: '5px' }}
+                                        src={markers.find((marker) => marker.id === activeMarkerId).imageUrl}
+                                        alt={markers.find((marker) => marker.id === activeMarkerId).title}
+                                        style={{ width: "100%", height: "auto", borderRadius: "5px" }}
                                     />
-                                    <p>{markers.find(marker => marker.id === activeMarkerId).description}</p>
+                                    <p>{markers.find((marker) => marker.id === activeMarkerId).description}</p>
 
-                                    <div style={{ marginTop: '10px' }}>
+                                    <div style={{ marginTop: "10px" }}>
                                         <a
-                                            href={markers.find(marker => marker.id === activeMarkerId).infoLink}
+                                            href={markers.find((marker) => marker.id === activeMarkerId).infoLink}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ textDecoration: 'none', color: '#007BFF', 'font-size': '16px' }}
+                                            style={{ textDecoration: "none", color: "#007BFF", fontSize: "16px" }}
                                         >
                                             More Information
                                         </a>
                                     </div>
-                                    <div style={{ marginTop: '10px' }}>
+                                    <div style={{ marginTop: "10px" }}>
                                         <a
-                                            href={markers.find(marker => marker.id === activeMarkerId).indoorMap}
+                                            href={markers.find((marker) => marker.id === activeMarkerId).indoorMap}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            style={{ textDecoration: 'none', color: '#007BFF', 'font-size': '16px' }}
+                                            style={{ textDecoration: "none", color: "#007BFF", fontSize: "16px" }}
                                         >
                                             Indoor Map
                                         </a>
@@ -122,7 +124,8 @@ export default function FreeMovingMap() {
     );
 }
 
-function Directions() {
+
+function Directions({ originMarker, destinationMarker }) {
     const map = useMap();
     const [directionsService, setDirectionsService] = useState(null);
     const [directionsRenderer, setDirectionsRenderer] = useState(null);
@@ -140,12 +143,12 @@ function Directions() {
     }, [map]);
 
     useEffect(() => {
-        if (!directionsService || !directionsRenderer) return;
+        if (!directionsService || !directionsRenderer || !originMarker || !destinationMarker) return;
 
         directionsService.route(
             {
-                origin: "212 W Main St, Salisbury MD",
-                destination: "112 W Main St, Salisbury MD",
+                origin: originMarker.position, // Use the position of the origin marker
+                destination: destinationMarker.position, // Use the position of the destination marker
                 travelMode: window.google.maps.TravelMode.WALKING,
                 provideRouteAlternatives: true,
             },
@@ -157,10 +160,11 @@ function Directions() {
                 }
             }
         );
-    }, [directionsService, directionsRenderer]);
+    }, [directionsService, directionsRenderer, originMarker, destinationMarker]);
 
     return null;
 }
+
 
 
 
