@@ -1,6 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
-import { APIProvider, Map, Marker, InfoWindow } from "@vis.gl/react-google-maps";
+import { useState, useRef, useEffect } from "react";
+import { APIProvider, Map, Marker, InfoWindow, useMap , useMapsLibrary } from "@vis.gl/react-google-maps";
 
 const apiKey = process.env.REACT_APP_API_KEY;
 const mapId = process.env.REACT_APP_MAP_ID;
@@ -67,6 +67,7 @@ export default function FreeMovingMap() {
                             mapRef.current = map;
                         }}
                     >
+                        <Directions />  {/* This is a custom component that we have to create and set up */}
                         {markers.map(marker => (
                             <Marker
                                 key={marker.id}
@@ -119,6 +120,46 @@ export default function FreeMovingMap() {
             </APIProvider>
         </div>
     );
+}
+
+function Directions() {
+    const map = useMap();
+    const [directionsService, setDirectionsService] = useState(null);
+    const [directionsRenderer, setDirectionsRenderer] = useState(null);
+
+    useEffect(() => {
+        if (!window.google || !map) return;
+
+        const service = new window.google.maps.DirectionsService();
+        const renderer = new window.google.maps.DirectionsRenderer({
+            map: map, // Render on the provided map
+        });
+
+        setDirectionsService(service);
+        setDirectionsRenderer(renderer);
+    }, [map]);
+
+    useEffect(() => {
+        if (!directionsService || !directionsRenderer) return;
+
+        directionsService.route(
+            {
+                origin: "212 W Main St, Salisbury MD",
+                destination: "112 W Main St, Salisbury MD",
+                travelMode: window.google.maps.TravelMode.WALKING,
+                provideRouteAlternatives: true,
+            },
+            (result, status) => {
+                if (status === window.google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                } else {
+                    console.error(`Error fetching directions ${status}`);
+                }
+            }
+        );
+    }, [directionsService, directionsRenderer]);
+
+    return null;
 }
 
 
