@@ -13,9 +13,10 @@ export default function FreeMovingMap() {
             description: "Visit the Rommel Center for various resources and events.",
             imageUrl: "https://0utwqfl7.cdn.imgeng.in/academic-offices/business/entrepreneurship-competitions/programs/_images/suec-reception.jpg",
             infoLink: "https://www.salisbury.edu/academic-offices/business/entrepreneurship-competitions/programs/",
+            indoorMap: "https://app.mappedin.com/map/66ba3373ef3ac6000be8a53c",
             icon: {
                 url: "https://cdn-icons-png.flaticon.com/512/10266/10266266.png",
-                scaledSize: { width: 25, height: 25 },
+                scaledSize: { width: 40, height: 40 },
             }
         },
         {
@@ -27,7 +28,7 @@ export default function FreeMovingMap() {
             infoLink: "https://www.facebook.com/twoscoopssby/", // Replace with an actual link
             icon: {
                 url: "https://downtownsby.com/wp-content/uploads/2021/10/Two-Scoops-Ice-Cream-Waffels.jpg", // Another unique icon
-                scaledSize: { width: 25, height: 25 },
+                scaledSize: { width: 40, height: 40 },
             }
         },
         // Add more markers with unique icons as needed
@@ -93,6 +94,16 @@ export default function FreeMovingMap() {
                                         style={{ textDecoration: 'none', color: '#007BFF', 'font-size': '16px' }}
                                     >
                                         More Information
+                                    </a>
+                                </div>
+                                <div style={{ marginTop: '10px' }}>
+                                    <a
+                                        href={markers.find(marker => marker.id === activeMarkerId).indoorMap}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ textDecoration: 'none', color: '#007BFF', 'font-size': '16px' }}
+                                    >
+                                        Indoor Map
                                     </a>
                                 </div>
                             </div>
