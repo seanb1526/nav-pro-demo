@@ -1,4 +1,3 @@
-"use client";
 import { useState, useRef, useEffect } from "react";
 import { APIProvider, Map, Marker, InfoWindow, useMap } from "@vis.gl/react-google-maps";
 
@@ -38,6 +37,9 @@ export default function FreeMovingMap() {
 
     const mapRef = useRef(null);
     const [activeMarkerId, setActiveMarkerId] = useState(null);
+    const [origin, setOrigin] = useState(markers[0]);
+    const [destination, setDestination] = useState(markers[1]);
+    const [directionsVisible, setDirectionsVisible] = useState(false); // Track if directions are visible
 
     const handleMarkerClick = (id) => {
         setActiveMarkerId(id);
@@ -47,10 +49,40 @@ export default function FreeMovingMap() {
         setActiveMarkerId(null);
     };
 
+    const handleDirectionsChange = () => {
+        setDirectionsVisible(true); // Show directions
+    };
+
+    const handleRemoveDirections = () => {
+        setDirectionsVisible(false); // Hide directions
+    };
+
     return (
         <div className="returnedContent">
             <APIProvider apiKey={apiKey}>
                 <div style={{ height: "100vh", width: "80vw", marginLeft: "20vw", position: "relative" }}>
+                    {/* Dropdowns for selecting origin and destination */}
+                    <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 1 }}>
+                        <select value={origin.id} onChange={(e) => setOrigin(markers.find(marker => marker.id === Number(e.target.value)))}>
+                            {markers.map(marker => (
+                                <option key={marker.id} value={marker.id}>{marker.title}</option>
+                            ))}
+                        </select>
+
+                        <select value={destination.id} onChange={(e) => setDestination(markers.find(marker => marker.id === Number(e.target.value)))}>
+                            {markers.map(marker => (
+                                <option key={marker.id} value={marker.id}>{marker.title}</option>
+                            ))}
+                        </select>
+
+                        <button onClick={handleDirectionsChange}>Get Directions</button>
+                        {directionsVisible && (
+                            <button onClick={handleRemoveDirections} style={{ marginLeft: "10px" }}>
+                                Remove Directions
+                            </button>
+                        )}
+                    </div>
+
                     <Map
                         defaultZoom={17}
                         defaultCenter={initialPosition}
@@ -65,8 +97,9 @@ export default function FreeMovingMap() {
                             mapRef.current = map;
                         }}
                     >
-                        {/* Pass the first and second markers as origin and destination */}
-                        <Directions originMarker={markers[0]} destinationMarker={markers[1]} />
+                        {directionsVisible && (
+                            <Directions originMarker={origin} destinationMarker={destination} />
+                        )}
 
                         {markers.map((marker) => (
                             <Marker
@@ -124,7 +157,6 @@ export default function FreeMovingMap() {
     );
 }
 
-
 function Directions({ originMarker, destinationMarker }) {
     const map = useMap();
     const [directionsService, setDirectionsService] = useState(null);
@@ -160,13 +192,12 @@ function Directions({ originMarker, destinationMarker }) {
                 }
             }
         );
+
+        return () => {
+            directionsRenderer.setMap(null); // Clear the map when component unmounts
+        };
     }, [directionsService, directionsRenderer, originMarker, destinationMarker]);
 
     return null;
 }
-
-
-
-
-
 
