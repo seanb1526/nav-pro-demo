@@ -15,7 +15,7 @@ export default function FreeMovingMap() {
             description: "Visit the Rommel Center for various resources and events.",
             imageUrl: "https://0utwqfl7.cdn.imgeng.in/academic-offices/business/entrepreneurship-competitions/programs/_images/suec-reception.jpg",
             infoLink: "https://www.salisbury.edu/academic-offices/business/entrepreneurship-competitions/programs/",
-            indoorMap: "https://app.mappedin.com/map/66ba3373ef3ac6000be8a53c",
+            indoorMap: "https://app.mappedin.com/map/66705274ba9455000bd6fc21?floor=m_2cf6d1c4348f51f1",
             icon: {
                 url: "https://cdn-icons-png.flaticon.com/512/10266/10266266.png",
                 scaledSize: { width: 35, height: 35 },
@@ -30,6 +30,18 @@ export default function FreeMovingMap() {
             infoLink: "https://www.facebook.com/twoscoopssby/",
             icon: {
                 url: "https://downtownsby.com/wp-content/uploads/2021/10/Two-Scoops-Ice-Cream-Waffels.jpg",
+                scaledSize: { width: 35, height: 35 },
+            },
+        },
+        {
+            id: 3,
+            position: { lat: 38.36551399811976, lng: -75.60094737973314 },
+            title: "Blackwater Apothecary",
+            description: "Boutique shop featuring handmade products, original artwork, and a curated shopping experience. Selling spiritual related items",
+            imageUrl: "https://downtownsby.com/wp-content/uploads/2021/04/255456734_1585510805128368_50409622180399601_n.jpg",
+            infoLink: "https://blackwaterapothecary.com/",
+            icon: {
+                url: "https://downtownsby.com/wp-content/uploads/2021/04/255456734_1585510805128368_50409622180399601_n.jpg",
                 scaledSize: { width: 35, height: 35 },
             },
         },
@@ -58,7 +70,7 @@ export default function FreeMovingMap() {
             <APIProvider apiKey={apiKey}>
                 <div style={{ height: "100vh", width: "100vw", display: "flex", overflow: "hidden" }}>
                     {/* Left-side panel with info window and business directory */}
-                    <div style={{ width: "calc(30vw - 15px)", padding: "10px", marginLeft: "15px", marginTop: "10px", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
+                    <div style={{ width: "calc(30vw - 0px)", padding: "10px", marginTop: "10px", marginLeft: "5px", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
 
                         {/* Info Window section (65% of the left panel) */}
                         <div style={{ flex: 65, overflowY: "auto", paddingBottom: "10px" }}>
