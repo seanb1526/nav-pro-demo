@@ -56,12 +56,12 @@ export default function FreeMovingMap() {
     return (
         <div className="returnedContent">
             <APIProvider apiKey={apiKey}>
-                <div style={{ height: "100vh", display: "flex" }}>
+                <div style={{ height: "100vh", width: "100vw", display: "flex", overflow: "hidden" }}>
                     {/* Left-side panel with info window and business directory */}
-                    <div style={{ width: "30vw", padding: "10px", marginTop: "10px", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
+                    <div style={{ width: "calc(30vw - 15px)", padding: "10px", marginLeft: "15px", marginTop: "10px", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
 
-                        {/* Info Window section */}
-                        <div style={{ flex: 1, overflowY: "auto" }}>
+                        {/* Info Window section (65% of the left panel) */}
+                        <div style={{ flex: 65, overflowY: "auto", paddingBottom: "10px" }}>
                             {activeMarkerId && (
                                 <div>
                                     <h4 style={{ margin: "0", fontSize: "18px" }}>{markers.find(marker => marker.id === activeMarkerId).title}</h4>
@@ -73,13 +73,17 @@ export default function FreeMovingMap() {
                                     <p>{markers.find(marker => marker.id === activeMarkerId).description}</p>
                                     <a href={markers.find(marker => marker.id === activeMarkerId).infoLink} target="_blank" rel="noopener noreferrer">More Information</a>
                                     <br />
-                                    <a href={markers.find(marker => marker.id === activeMarkerId).indoorMap} target="_blank" rel="noopener noreferrer">Indoor Map</a>
+                                    {markers.find(marker => marker.id === activeMarkerId).indoorMap && (
+                                        <a href={markers.find(marker => marker.id === activeMarkerId).indoorMap} target="_blank" rel="noopener noreferrer">
+                                            Indoor Map
+                                        </a>
+                                    )}
                                 </div>
                             )}
                         </div>
 
-                        {/* Business Directory Section */}
-                        <div style={{ flex: 1, overflowY: "auto" }}>
+                        {/* Business Directory Section (35% of the left panel) */}
+                        <div style={{ flex: 35, overflowY: "auto" }}>
                             <h4>Business Directory</h4>
                             <ul style={{ listStyleType: "none", padding: 0 }}>
                                 {markers.map((marker) => (
@@ -91,6 +95,9 @@ export default function FreeMovingMap() {
                             </ul>
                         </div>
                     </div>
+
+
+
 
                     {/* Map */}
                     <div style={{ height: "100vh", width: "70vw", position: "relative" }}>
@@ -169,36 +176,38 @@ export default function FreeMovingMap() {
                             )}
                         </div>
 
+                        <div style={{ height: "100vh", width: "calc(70vw - 15px)" }}>
+                            <Map
+                                defaultZoom={17}
+                                defaultCenter={initialPosition}
+                                mapId={mapId}
+                                options={{
+                                    draggable: true,
+                                    gestureHandling: "greedy",
+                                    scrollwheel: true,
+                                    disableDefaultUI: false,
+                                    mapTypeControl: false, // Disable the Map/Satellite buttons
+                                }}
+                                onLoad={(map) => {
+                                    mapRef.current = map;
+                                }}
+                            >
 
-                        <Map
-                            defaultZoom={17}
-                            defaultCenter={initialPosition}
-                            mapId={mapId}
-                            options={{
-                                draggable: true,
-                                gestureHandling: "greedy",
-                                scrollwheel: true,
-                                disableDefaultUI: false,
-                                mapTypeControl: false, // Disable the Map/Satellite buttons
-                            }}
-                            onLoad={(map) => {
-                                mapRef.current = map;
-                            }}
-                        >
-                            {directionsVisible && (
-                                <Directions originMarker={origin} destinationMarker={destination} />
-                            )}
+                                {directionsVisible && (
+                                    <Directions originMarker={origin} destinationMarker={destination} />
+                                )}
 
-                            {markers.map((marker) => (
-                                <Marker
-                                    key={marker.id}
-                                    position={marker.position}
-                                    title={marker.title}
-                                    icon={marker.icon}
-                                    onClick={() => handleMarkerClick(marker.id)}
-                                />
-                            ))}
-                        </Map>
+                                {markers.map((marker) => (
+                                    <Marker
+                                        key={marker.id}
+                                        position={marker.position}
+                                        title={marker.title}
+                                        icon={marker.icon}
+                                        onClick={() => handleMarkerClick(marker.id)}
+                                    />
+                                ))}
+                            </Map>
+                        </div>
                     </div>
                 </div>
             </APIProvider>
