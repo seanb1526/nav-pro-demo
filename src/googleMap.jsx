@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { APIProvider, Map, Marker, InfoWindow, useMap } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
 
 const apiKey = process.env.REACT_APP_API_KEY;
 const mapId = process.env.REACT_APP_MAP_ID;
@@ -43,10 +43,6 @@ export default function FreeMovingMap() {
 
     const handleMarkerClick = (id) => {
         setActiveMarkerId(id);
-    };
-
-    const handleInfoWindowClose = () => {
-        setActiveMarkerId(null);
     };
 
     const handleDirectionsChange = () => {
