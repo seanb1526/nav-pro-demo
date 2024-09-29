@@ -62,8 +62,8 @@ export default function FreeMovingMap() {
             <APIProvider apiKey={apiKey}>
                 <div style={{ height: "100vh", display: "flex" }}>
                     {/* Left-side panel with info window and business directory */}
-                    <div style={{ width: "20vw", padding: "10px", marginTop: "10px" , display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
-                        
+                    <div style={{ width: "30vw", padding: "10px", marginTop: "10px", display: "flex", flexDirection: "column", justifyContent: "space-between", borderRight: "1px solid #ccc" }}>
+
                         {/* Info Window section */}
                         <div style={{ flex: 1, overflowY: "auto" }}>
                             {activeMarkerId && (
@@ -97,27 +97,82 @@ export default function FreeMovingMap() {
                     </div>
 
                     {/* Map */}
-                    <div style={{ height: "100vh", width: "80vw", position: "relative" }}>
-                        <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 1 }}>
-                            <select value={origin.id} onChange={(e) => setOrigin(markers.find(marker => marker.id === Number(e.target.value)))}>
+                    <div style={{ height: "100vh", width: "70vw", position: "relative" }}>
+                        <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 1, display: "flex", gap: "10px", alignItems: "center" }}>
+                            <select
+                                value={origin.id}
+                                onChange={(e) => setOrigin(markers.find(marker => marker.id === Number(e.target.value)))}
+                                style={{
+                                    padding: "10px 15px",
+                                    fontSize: "16px",
+                                    borderRadius: "8px",
+                                    border: "1px solid #ccc",
+                                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                                    cursor: "pointer",
+                                    outline: "none",
+                                }}
+                            >
                                 {markers.map(marker => (
                                     <option key={marker.id} value={marker.id}>{marker.title}</option>
                                 ))}
                             </select>
 
-                            <select value={destination.id} onChange={(e) => setDestination(markers.find(marker => marker.id === Number(e.target.value)))}>
+                            <select
+                                value={destination.id}
+                                onChange={(e) => setDestination(markers.find(marker => marker.id === Number(e.target.value)))}
+                                style={{
+                                    padding: "10px 15px",
+                                    fontSize: "16px",
+                                    borderRadius: "8px",
+                                    border: "1px solid #ccc",
+                                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                                    cursor: "pointer",
+                                    outline: "none",
+                                }}
+                            >
                                 {markers.map(marker => (
                                     <option key={marker.id} value={marker.id}>{marker.title}</option>
                                 ))}
                             </select>
 
-                            <button onClick={handleDirectionsChange}>Get Directions</button>
+                            <button
+                                onClick={handleDirectionsChange}
+                                style={{
+                                    padding: "10px 20px",
+                                    fontSize: "16px",
+                                    backgroundColor: "#007bff",
+                                    color: "#fff",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+                                    transition: "background-color 0.3s ease",
+                                }}
+                            >
+                                Get Directions
+                            </button>
+
                             {directionsVisible && (
-                                <button onClick={handleRemoveDirections} style={{ marginLeft: "10px" }}>
+                                <button
+                                    onClick={handleRemoveDirections}
+                                    style={{
+                                        padding: "10px 20px",
+                                        fontSize: "16px",
+                                        backgroundColor: "#dc3545",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "8px",
+                                        cursor: "pointer",
+                                        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+                                        transition: "background-color 0.3s ease",
+                                        marginLeft: "10px",
+                                    }}
+                                >
                                     Remove Directions
                                 </button>
                             )}
                         </div>
+
 
                         <Map
                             defaultZoom={17}
@@ -128,6 +183,7 @@ export default function FreeMovingMap() {
                                 gestureHandling: "greedy",
                                 scrollwheel: true,
                                 disableDefaultUI: false,
+                                mapTypeControl: false, // Disable the Map/Satellite buttons
                             }}
                             onLoad={(map) => {
                                 mapRef.current = map;
