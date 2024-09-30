@@ -9,8 +9,8 @@ const Navbar = () => {
       <ul className="navbar-links">
         <li><a href="#home">Home</a></li>
         <li><a href="#myFrame">Map</a></li>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#myFrame2">Map2</a></li>
+        <li><a href="#googleMaps">GPS</a></li>
       </ul>
     </nav>
   );
