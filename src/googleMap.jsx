@@ -80,7 +80,7 @@ export default function FreeMovingMap() {
                                     <img
                                         src={markers.find(marker => marker.id === activeMarkerId).imageUrl}
                                         alt={markers.find(marker => marker.id === activeMarkerId).title}
-                                        style={{ width: "100%", maxHeight: "150px", objectFit: "cover", borderRadius: "5px", marginTop: "10px" }}
+                                        style={{ width: "100%", maxHeight: "250px", objectFit: "cover", borderRadius: "5px", marginTop: "10px" }}
                                     />
                                     <p>{markers.find(marker => marker.id === activeMarkerId).description}</p>
                                     <a href={markers.find(marker => marker.id === activeMarkerId).infoLink} target="_blank" rel="noopener noreferrer">More Information</a>
